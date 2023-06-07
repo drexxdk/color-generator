@@ -42,7 +42,7 @@ const getColors = ({
       if (backgroundRGB) {
         const BackgroundLuminance = getLuminanace(backgroundRGB);
 
-        item.texts.light = {
+        item.light = {
           value: textLightHex,
           ratio:
             BackgroundLuminance > textLightLuminance
@@ -50,7 +50,7 @@ const getColors = ({
               : (BackgroundLuminance + 0.05) / (textLightLuminance + 0.05),
         };
 
-        item.texts.dark = {
+        item.dark = {
           value: textDarkHex,
           ratio:
             BackgroundLuminance > textDarkLuminance
@@ -58,11 +58,11 @@ const getColors = ({
               : (BackgroundLuminance + 0.05) / (textDarkLuminance + 0.05),
         };
 
-        item.texts.ideal =
-          item.texts.light && item.texts.dark
-            ? item.texts.light.ratio > item.texts.dark.ratio
-              ? item.texts.dark
-              : item.texts.light
+        item.ideal =
+          item.light && item.dark
+            ? item.light.ratio > item.dark.ratio
+              ? item.dark
+              : item.light
             : undefined;
       }
     });
@@ -93,7 +93,6 @@ const geneteItems = ({
         items.push({
           name: `${prefix}${numberInterval / 2}${suffix}`,
           percentage: (variants - i) * percentage - percentage / 2,
-          texts: {},
         });
       } else if (i + 1 === total) {
         items.push({
@@ -101,20 +100,17 @@ const geneteItems = ({
             numberInterval * (i - 1) + numberInterval / 2
           }${suffix}`,
           percentage: (variants - i + 1) * percentage - percentage / 2,
-          texts: {},
         });
       } else {
         items.push({
           name: `${prefix}${numberInterval * i}${suffix}`,
           percentage: (variants - i) * percentage,
-          texts: {},
         });
       }
     } else {
       items.push({
         name: `${prefix}${numberInterval * i}${suffix}`,
         percentage: (variants - i) * percentage,
-        texts: {},
       });
     }
   }

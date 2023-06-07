@@ -1,0 +1,15 @@
+.hexcolorpicker {
+  height: auto !important;
+  @apply gap-2;
+
+  :global {
+    .react-colorful__saturation {
+      @apply aspect-video border-none;
+    }
+
+    .react-colorful__saturation,
+    .react-colorful__last-control {
+      @apply rounded-md;
+    }
+  }
+}

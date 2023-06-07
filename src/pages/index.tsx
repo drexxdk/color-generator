@@ -1,24 +1,33 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { HexColorInput, HexColorPicker } from "react-colorful";
+import {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from "react";
 import { type Color } from "~/types/color";
 import getColors from "~/utils/getColors";
 
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import classNames from "classnames";
 
 const Home: NextPage = () => {
-  const ref = useRef<HTMLTextAreaElement>(null);
   const [prefix, setPrefix] = useState<string>("color-");
   const [suffix, setSuffix] = useState<string>("");
-  const [numberInterval, setNumberInterval] = useState<number>(100);
-  const [variants, setVariants] = useState<number>(5);
-  const [halfNumberForFirstAndLast, setHalfNumberForFirstAndLast] =
-    useState<boolean>(true);
 
+  const [variants, setVariants] = useState<number>(5);
+  const [numberInterval, setNumberInterval] = useState<number>(100);
+
+  const [backgroundHex, setBackgroundHex] = useState<string>("#ff0000");
   const [textLightHex, setTextLightHex] = useState<string>("#ffffff");
   const [textDarkHex, setTextDarkHex] = useState<string>("#000000");
-  const [backgroundHex, setBackgroundHex] = useState<string>("#ff0000");
+
+  const [halfNumberForFirstAndLast, setHalfNumberForFirstAndLast] =
+    useState<boolean>(true);
+  const [showHeadlines, setShowHeadlines] = useState<boolean>(false);
+  const [showRatios, setShowRatios] = useState<boolean>(false);
 
   const [items, setItems] = useState<Color[]>();
 
@@ -27,9 +36,9 @@ const Home: NextPage = () => {
       getColors({
         prefix,
         suffix,
-        halfNumberForFirstAndLast,
-        numberInterval,
         variants,
+        numberInterval,
+        halfNumberForFirstAndLast,
         backgroundHex,
         textLightHex,
         textDarkHex,
@@ -38,9 +47,9 @@ const Home: NextPage = () => {
   }, [
     prefix,
     suffix,
-    halfNumberForFirstAndLast,
-    numberInterval,
     variants,
+    numberInterval,
+    halfNumberForFirstAndLast,
     backgroundHex,
     textLightHex,
     textDarkHex,
@@ -54,264 +63,247 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="p-5">
-        <div className="container mx-auto">
-          <h1 className="mb-5 border-b border-gray-500 pb-5 font-bold">
-            Color generator
-          </h1>
-          <div className="flex flex-wrap gap-5">
-            <div className="grow basis-80 @container">
-              <h2 className="pb-2 font-bold">Settings</h2>
-              <table className="w-full">
-                <tbody>
-                  <RenderTr>
-                    <RenderTh>Prefix</RenderTh>
-                    <RenderTd>
-                      <input
-                        type="text"
-                        value={prefix}
-                        onChange={(e) => setPrefix(e.target.value)}
-                        className="w-full border border-gray-500"
-                      />
-                    </RenderTd>
-                  </RenderTr>
+        <div className="container mx-auto grid gap-8 @container">
+          <form className="grid gap-8 @container">
+            <div className="grid gap-8 @md:grid-cols-2">
+              <InputGroup className="mt-[10px]">
+                <Input
+                  type="text"
+                  name="prefix"
+                  placeholder=" "
+                  value={prefix}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setPrefix(e.target.value)
+                  }
+                />
+                <Label htmlFor="prefix">Prefix</Label>
+              </InputGroup>
 
-                  <RenderTr>
-                    <RenderTh>Suffix</RenderTh>
-                    <RenderTd>
-                      <input
-                        type="text"
-                        value={suffix}
-                        onChange={(e) => setSuffix(e.target.value)}
-                        className="w-full border border-gray-500"
-                      />
-                    </RenderTd>
-                  </RenderTr>
-
-                  <RenderTr>
-                    <RenderTh>Variants</RenderTh>
-                    <RenderTd>
-                      <input
-                        type="number"
-                        onChange={(e) => {
-                          const value = Number(e.target.value);
-                          setVariants(value);
-                        }}
-                        className="w-full border border-gray-500"
-                        value={variants}
-                        min={0}
-                        max={25}
-                      />
-                    </RenderTd>
-                  </RenderTr>
-
-                  <RenderTr>
-                    <RenderTh>Number Interval</RenderTh>
-                    <RenderTd>
-                      <input
-                        type="number"
-                        onChange={(e) => {
-                          const value = Number(e.target.value);
-                          setNumberInterval(value || 1);
-                        }}
-                        className="w-full border border-gray-500"
-                        value={numberInterval}
-                        min={1}
-                      />
-                    </RenderTd>
-                  </RenderTr>
-
-                  <RenderTr>
-                    <RenderTh>Half number for first and last</RenderTh>
-                    <RenderTd>
-                      <input
-                        type="checkbox"
-                        onChange={(e) => {
-                          setHalfNumberForFirstAndLast(e.target.checked);
-                        }}
-                        checked={halfNumberForFirstAndLast}
-                      />
-                    </RenderTd>
-                  </RenderTr>
-
-                  <RenderTr>
-                    <RenderTh>Background color</RenderTh>
-                    <RenderTd>
-                      <HexColorPicker
-                        color={backgroundHex}
-                        onChange={setBackgroundHex}
-                        className="!w-auto"
-                      />
-                      <HexColorInput
-                        color={backgroundHex}
-                        onChange={setBackgroundHex}
-                      />
-                    </RenderTd>
-                  </RenderTr>
-
-                  <RenderTr>
-                    <RenderTh>Text light</RenderTh>
-                    <RenderTd>
-                      <HexColorPicker
-                        color={textLightHex}
-                        onChange={setTextLightHex}
-                        className="!w-auto"
-                      />
-                      <HexColorInput
-                        color={textLightHex}
-                        onChange={setTextLightHex}
-                      />
-                    </RenderTd>
-                  </RenderTr>
-
-                  <RenderTr>
-                    <RenderTh>Text dark</RenderTh>
-                    <RenderTd>
-                      <HexColorPicker
-                        color={textDarkHex}
-                        onChange={setTextDarkHex}
-                        className="!w-auto"
-                      />
-                      <HexColorInput
-                        color={textDarkHex}
-                        onChange={setTextDarkHex}
-                      />
-                    </RenderTd>
-                  </RenderTr>
-                </tbody>
-              </table>
+              <InputGroup className="mt-[10px]">
+                <Input
+                  type="text"
+                  name="suffix"
+                  placeholder=" "
+                  value={suffix}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setSuffix(e.target.value)
+                  }
+                />
+                <Label htmlFor="prefix">Suffix</Label>
+              </InputGroup>
             </div>
-            <div className="grow basis-80">
-              <h2 className="pb-2 font-bold">Preview</h2>
-              {items?.length ? (
-                <ul>
+
+            <div className="grid gap-8 @md:grid-cols-2">
+              <InputGroup className="mt-[10px]">
+                <Input
+                  type="number"
+                  name="variants"
+                  placeholder=" "
+                  value={variants}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    const value = Number(e.target.value);
+                    setVariants(value);
+                  }}
+                  min={0}
+                  max={25}
+                />
+                <Label htmlFor="variants">Variants</Label>
+              </InputGroup>
+
+              <InputGroup className="mt-[10px]">
+                <Input
+                  type="number"
+                  name="interval"
+                  placeholder=" "
+                  value={numberInterval}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    const value = Number(e.target.value);
+                    setNumberInterval(value || 1);
+                  }}
+                  min={1}
+                />
+                <Label htmlFor="interval">Interval</Label>
+              </InputGroup>
+            </div>
+
+            <div className="grid gap-8 @md:grid-cols-3">
+              <InputGroup>
+                <Headline>Background</Headline>
+                <input
+                  name="backgroundHex"
+                  type="color"
+                  value={backgroundHex}
+                  onChange={(e) => setBackgroundHex(e.target.value)}
+                ></input>
+              </InputGroup>
+              <InputGroup>
+                <Headline>Text light</Headline>
+                <input
+                  name="textLightHex"
+                  type="color"
+                  value={textLightHex}
+                  onChange={(e) => setTextLightHex(e.target.value)}
+                ></input>
+              </InputGroup>
+
+              <InputGroup>
+                <Headline>Text Dark</Headline>
+                <input
+                  name="textDarkHex"
+                  type="color"
+                  value={textDarkHex}
+                  onChange={(e) => setTextDarkHex(e.target.value)}
+                ></input>
+              </InputGroup>
+            </div>
+
+            <div className="grid gap-8 @md:grid-cols-3">
+              <InputGroup>
+                <Headline>Half number for first and last</Headline>
+                <Checkbox
+                  checked={halfNumberForFirstAndLast}
+                  onChange={(e) => {
+                    setHalfNumberForFirstAndLast(e.target.checked);
+                  }}
+                >
+                  Enabled
+                </Checkbox>
+              </InputGroup>
+
+              <InputGroup>
+                <Headline>Show headlines</Headline>
+                <Checkbox
+                  checked={showHeadlines}
+                  onChange={(e) => {
+                    setShowHeadlines(e.target.checked);
+                  }}
+                >
+                  Enabled
+                </Checkbox>
+              </InputGroup>
+
+              <InputGroup>
+                <Headline>Show Ratios</Headline>
+                <Checkbox
+                  checked={showRatios}
+                  onChange={(e) => {
+                    setShowRatios(e.target.checked);
+                  }}
+                >
+                  Enabled
+                </Checkbox>
+              </InputGroup>
+            </div>
+          </form>
+
+          <div>
+            <h2 className="pb-2 font-bold">Preview</h2>
+            {items?.length ? (
+              <table className="border-collapse">
+                {showHeadlines && (
+                  <thead>
+                    <tr>
+                      <Th>Name</Th>
+                      <Th>Background</Th>
+                      <Th>Text light</Th>
+                      {showRatios && (
+                        <>
+                          <Th>AA L</Th>
+                          <Th>AA S</Th>
+                          <Th>AAA L</Th>
+                          <Th>AAA S</Th>
+                        </>
+                      )}
+                      <Th>Text dark</Th>
+                      {showRatios && (
+                        <>
+                          <Th>AA L</Th>
+                          <Th>AA S</Th>
+                          <Th>AAA L</Th>
+                          <Th>AAA S</Th>
+                        </>
+                      )}
+                    </tr>
+                  </thead>
+                )}
+                <tbody>
                   {items.map((item, i) => {
                     return (
-                      <li key={i}>
-                        <ul
-                          className="wrap flex gap-2 p-2"
-                          style={{
-                            backgroundColor: item.background,
-                          }}
-                        >
-                          <li className=" bg-gray-600 p-2 text-white">
-                            <h4 className="font-bold">{item.background}</h4>{" "}
-                            <h3 className="whitespace-nowrap font-bold">
-                              {item.name}
-                            </h3>
-                          </li>
-                          <li
-                            style={{ color: item.texts.light?.value }}
-                            className="text-center"
-                          >
-                            <h4 className="font-bold">
-                              {item.texts.light?.value}
-                            </h4>
-                            {item.texts.light?.ratio ? (
-                              <ul className="flex flex-wrap justify-center gap-2">
-                                <li className="flex items-center gap-2">
-                                  AA L:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.light.ratio < 1 / 3 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  AA S:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.light.ratio < 1 / 4.5 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  AAA L:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.light.ratio < 1 / 4.5 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  AAA S:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.light.ratio < 1 / 7 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                              </ul>
-                            ) : null}
-                          </li>
-                          <li
-                            style={{ color: item.texts.dark?.value }}
-                            className="text-center"
-                          >
-                            <h4 className="font-bold">
-                              {item.texts.dark?.value}
-                            </h4>
-                            {item.texts.dark?.ratio ? (
-                              <ul className="flex flex-wrap justify-center gap-2">
-                                <li className="flex items-center gap-2">
-                                  AA L:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.dark.ratio < 1 / 3 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  AA S:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.dark.ratio < 1 / 4.5 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  AAA L:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.dark.ratio < 1 / 4.5 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  AAA S:
-                                  <div className="p rounded-full bg-black">
-                                    {item.texts.dark.ratio < 1 / 7 ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <XCircleIcon className="h-6 w-6 text-red-500" />
-                                    )}
-                                  </div>
-                                </li>
-                              </ul>
-                            ) : null}
-                          </li>
-                        </ul>
-                      </li>
+                      <tr
+                        key={i}
+                        style={{
+                          backgroundColor: item.background,
+                          color: item.ideal?.value,
+                        }}
+                      >
+                        <Td>{item.name}</Td>
+                        <Td>{item.background}</Td>
+                        <Td>{item.light?.value}</Td>
+                        {showRatios && (
+                          <>
+                            <Td>
+                              <Ratio
+                                ratio={item.light?.ratio}
+                                validation={1 / 3}
+                              />
+                            </Td>
+                            <Td>
+                              <Ratio
+                                ratio={item.light?.ratio}
+                                validation={1 / 4.5}
+                              />
+                            </Td>
+                            <Td>
+                              <Ratio
+                                ratio={item.light?.ratio}
+                                validation={1 / 4.5}
+                              />
+                            </Td>
+                            <Td>
+                              <Ratio
+                                ratio={item.light?.ratio}
+                                validation={1 / 7}
+                              />
+                            </Td>
+                          </>
+                        )}
+                        <Td>{item.dark?.value}</Td>
+                        {showRatios && (
+                          <>
+                            <Td>
+                              <Ratio
+                                ratio={item.dark?.ratio}
+                                validation={1 / 3}
+                              />
+                            </Td>
+                            <Td>
+                              <Ratio
+                                ratio={item.dark?.ratio}
+                                validation={1 / 4.5}
+                              />
+                            </Td>
+                            <Td>
+                              <Ratio
+                                ratio={item.dark?.ratio}
+                                validation={1 / 4.5}
+                              />
+                            </Td>
+                            <Td>
+                              <Ratio
+                                ratio={item.dark?.ratio}
+                                validation={1 / 7}
+                              />
+                            </Td>
+                          </>
+                        )}
+                      </tr>
                     );
                   })}
-                </ul>
-              ) : (
-                <>Nothing to show</>
-              )}
-            </div>
+                </tbody>
+              </table>
+            ) : (
+              <>Nothing to show</>
+            )}
           </div>
         </div>
       </main>
@@ -319,11 +311,86 @@ const Home: NextPage = () => {
   );
 };
 
-const RenderTr = ({ children }: { children: ReactNode }) => {
-  return <tr className="block @sm:table-row">{children}</tr>;
+const InputGroup = ({
+  className,
+  children,
+  ...props
+}: ComponentPropsWithoutRef<"div">) => {
+  return (
+    <div
+      className={classNames("group relative z-0 w-full", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 };
 
-const RenderTh = ({
+const Input = ({ ...props }) => {
+  return (
+    <input
+      className="peer block w-full appearance-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0"
+      {...props}
+    />
+  );
+};
+
+const Label = ({ children, ...props }: ComponentPropsWithoutRef<"label">) => {
+  return (
+    <label
+      {...props}
+      className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm  text-gray-400 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75  peer-focus:font-medium peer-focus:text-blue-500"
+    >
+      {children}
+    </label>
+  );
+};
+
+const Checkbox = ({
+  children,
+  checked,
+  onChange,
+}: {
+  children: ReactNode;
+  checked: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  return (
+    <label className="flex items-center gap-2 text-sm font-medium text-gray-300">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 ring-offset-gray-800 focus:ring-2 focus:ring-blue-600"
+      />
+      {children}
+    </label>
+  );
+};
+
+const Headline = ({ children }: { children: ReactNode }) => {
+  return <h2 className="mb-1 text-[10.5px] text-gray-400">{children}</h2>;
+};
+
+const Ratio = ({
+  ratio,
+  validation,
+}: {
+  ratio?: number;
+  validation: number;
+}) => {
+  return ratio ? (
+    <div className="p rounded-full bg-black">
+      {ratio < validation ? (
+        <CheckCircleIcon className="h-6 w-6 text-green-500" />
+      ) : (
+        <XCircleIcon className="h-6 w-6 text-red-500" />
+      )}
+    </div>
+  ) : null;
+};
+
+const Th = ({
   children,
   colspan = 1,
 }: {
@@ -332,15 +399,17 @@ const RenderTh = ({
 }) => {
   return (
     <th
-      className="block p-2 text-left @sm:table-cell @sm:max-w-[100px] @sm:text-right"
+      className="relative h-28 border border-gray-500 px-2 text-left"
       colSpan={colspan}
     >
-      {children}
+      <span className="absolute bottom-2 left-[50%] origin-bottom-left rotate-[285deg] whitespace-nowrap">
+        {children}
+      </span>
     </th>
   );
 };
 
-const RenderTd = ({
+const Td = ({
   children,
   colspan = 1,
 }: {
@@ -348,7 +417,7 @@ const RenderTd = ({
   colspan?: number;
 }) => {
   return (
-    <td className="block p-2 @sm:table-cell" colSpan={colspan}>
+    <td className="border border-gray-500 px-2" colSpan={colspan}>
       {children}
     </td>
   );
