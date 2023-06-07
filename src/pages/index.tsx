@@ -65,7 +65,7 @@ const Home: NextPage = () => {
       <main className="p-5">
         <div className="container mx-auto grid gap-8 @container">
           <form className="grid gap-8 @container">
-            <div className="grid gap-8 @md:grid-cols-2">
+            <div className="grid gap-8 @md:grid-cols-2 @4xl:grid-cols-4">
               <InputGroup className="mt-[10px]">
                 <Input
                   type="text"
@@ -91,9 +91,7 @@ const Home: NextPage = () => {
                 />
                 <Label htmlFor="prefix">Suffix</Label>
               </InputGroup>
-            </div>
 
-            <div className="grid gap-8 @md:grid-cols-2">
               <InputGroup className="mt-[10px]">
                 <Input
                   type="number"
