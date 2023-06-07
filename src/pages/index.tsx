@@ -26,8 +26,8 @@ const Home: NextPage = () => {
 
   const [halfNumberForFirstAndLast, setHalfNumberForFirstAndLast] =
     useState<boolean>(true);
-  const [showHeadlines, setShowHeadlines] = useState<boolean>(false);
-  const [showRatios, setShowRatios] = useState<boolean>(false);
+  const [showHeadlines, setShowHeadlines] = useState<boolean>(true);
+  const [showRatios, setShowRatios] = useState<boolean>(true);
 
   const [items, setItems] = useState<Color[]>();
 
@@ -63,10 +63,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="p-5">
-        <div className="container mx-auto grid gap-8 @container">
+        <div className="mx-auto grid w-full max-w-3xl gap-8 @container">
           <form className="grid gap-8 @container">
             <div className="grid gap-8 @md:grid-cols-2 @4xl:grid-cols-4">
-              <InputGroup className="mt-[10px]">
+              <InputGroup1>
                 <Input
                   type="text"
                   name="prefix"
@@ -77,9 +77,9 @@ const Home: NextPage = () => {
                   }
                 />
                 <Label htmlFor="prefix">Prefix</Label>
-              </InputGroup>
+              </InputGroup1>
 
-              <InputGroup className="mt-[10px]">
+              <InputGroup1>
                 <Input
                   type="text"
                   name="suffix"
@@ -90,9 +90,9 @@ const Home: NextPage = () => {
                   }
                 />
                 <Label htmlFor="prefix">Suffix</Label>
-              </InputGroup>
+              </InputGroup1>
 
-              <InputGroup className="mt-[10px]">
+              <InputGroup1>
                 <Input
                   type="number"
                   name="variants"
@@ -106,9 +106,9 @@ const Home: NextPage = () => {
                   max={25}
                 />
                 <Label htmlFor="variants">Variants</Label>
-              </InputGroup>
+              </InputGroup1>
 
-              <InputGroup className="mt-[10px]">
+              <InputGroup1>
                 <Input
                   type="number"
                   name="interval"
@@ -121,11 +121,11 @@ const Home: NextPage = () => {
                   min={1}
                 />
                 <Label htmlFor="interval">Interval</Label>
-              </InputGroup>
+              </InputGroup1>
             </div>
 
-            <div className="grid gap-8 @md:grid-cols-3">
-              <InputGroup>
+            <div className="grid gap-8 @md:grid-cols-3 @4xl:grid-cols-6">
+              <InputGroup2>
                 <Headline>Background</Headline>
                 <input
                   name="backgroundHex"
@@ -133,8 +133,8 @@ const Home: NextPage = () => {
                   value={backgroundHex}
                   onChange={(e) => setBackgroundHex(e.target.value)}
                 ></input>
-              </InputGroup>
-              <InputGroup>
+              </InputGroup2>
+              <InputGroup2>
                 <Headline>Text light</Headline>
                 <input
                   name="textLightHex"
@@ -142,9 +142,9 @@ const Home: NextPage = () => {
                   value={textLightHex}
                   onChange={(e) => setTextLightHex(e.target.value)}
                 ></input>
-              </InputGroup>
+              </InputGroup2>
 
-              <InputGroup>
+              <InputGroup2>
                 <Headline>Text Dark</Headline>
                 <input
                   name="textDarkHex"
@@ -152,11 +152,9 @@ const Home: NextPage = () => {
                   value={textDarkHex}
                   onChange={(e) => setTextDarkHex(e.target.value)}
                 ></input>
-              </InputGroup>
-            </div>
+              </InputGroup2>
 
-            <div className="grid gap-8 @md:grid-cols-3">
-              <InputGroup>
+              <InputGroup2>
                 <Headline>Half number for first and last</Headline>
                 <Checkbox
                   checked={halfNumberForFirstAndLast}
@@ -166,9 +164,9 @@ const Home: NextPage = () => {
                 >
                   Enabled
                 </Checkbox>
-              </InputGroup>
+              </InputGroup2>
 
-              <InputGroup>
+              <InputGroup2>
                 <Headline>Show headlines</Headline>
                 <Checkbox
                   checked={showHeadlines}
@@ -178,9 +176,9 @@ const Home: NextPage = () => {
                 >
                   Enabled
                 </Checkbox>
-              </InputGroup>
+              </InputGroup2>
 
-              <InputGroup>
+              <InputGroup2>
                 <Headline>Show Ratios</Headline>
                 <Checkbox
                   checked={showRatios}
@@ -190,12 +188,11 @@ const Home: NextPage = () => {
                 >
                   Enabled
                 </Checkbox>
-              </InputGroup>
+              </InputGroup2>
             </div>
           </form>
 
-          <div>
-            <h2 className="pb-2 font-bold">Preview</h2>
+          <div className="grid w-full justify-center overflow-auto">
             {items?.length ? (
               <table className="border-collapse">
                 {showHeadlines && (
@@ -309,14 +306,31 @@ const Home: NextPage = () => {
   );
 };
 
-const InputGroup = ({
+const InputGroup1 = ({
   className,
   children,
   ...props
 }: ComponentPropsWithoutRef<"div">) => {
   return (
     <div
-      className={classNames("group relative z-0 w-full", className)}
+      className={classNames("group relative z-0 mt-[10px] w-full", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+const InputGroup2 = ({
+  className,
+  children,
+  ...props
+}: ComponentPropsWithoutRef<"div">) => {
+  return (
+    <div
+      className={classNames(
+        "flex w-full flex-col items-center justify-center text-center",
+        className
+      )}
       {...props}
     >
       {children}
