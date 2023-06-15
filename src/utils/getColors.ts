@@ -1,5 +1,6 @@
 import { type Color } from "~/types/color";
-import getLuminanace from "./getLuminance";
+import getContrast from "./getContrast";
+import getRatio from "./getRatio";
 import hexToRGB from "./hexToRGB";
 import lightenDarkenHexColor from "./lightenDarkenHexColor";
 
@@ -33,29 +34,19 @@ const getColors = ({
   const textDarkRGB = hexToRGB(textDarkHex);
 
   if (textLightRGB && textDarkRGB) {
-    const textLightLuminance = getLuminanace(textLightRGB);
-    const textDarkLuminance = getLuminanace(textDarkRGB);
-
     items.forEach((item) => {
       item.background = lightenDarkenHexColor(backgroundHex, item.percentage);
       const backgroundRGB = hexToRGB(item.background);
-      if (backgroundRGB) {
-        const BackgroundLuminance = getLuminanace(backgroundRGB);
 
+      if (backgroundRGB) {
         item.light = {
           value: textLightHex,
-          ratio:
-            BackgroundLuminance > textLightLuminance
-              ? (textLightLuminance + 0.05) / (BackgroundLuminance + 0.05)
-              : (BackgroundLuminance + 0.05) / (textLightLuminance + 0.05),
+          ratio: getRatio(getContrast(textLightRGB, backgroundRGB)),
         };
 
         item.dark = {
           value: textDarkHex,
-          ratio:
-            BackgroundLuminance > textDarkLuminance
-              ? (textDarkLuminance + 0.05) / (BackgroundLuminance + 0.05)
-              : (BackgroundLuminance + 0.05) / (textDarkLuminance + 0.05),
+          ratio: getRatio(getContrast(textDarkRGB, backgroundRGB)),
         };
 
         item.ideal =

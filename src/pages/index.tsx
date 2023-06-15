@@ -62,9 +62,9 @@ const Home: NextPage = () => {
         <meta name="description" content="Color generator" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="p-5">
-        <div className="mx-auto grid w-full max-w-3xl gap-8 @container">
-          <form className="grid gap-8 @container">
+      <main className="grid justify-center gap-8 p-5">
+        <div className="grid justify-center @container">
+          <form className="grid w-full max-w-3xl gap-8 ">
             <div className="grid gap-8 @md:grid-cols-2 @4xl:grid-cols-4">
               <InputGroup1>
                 <Input
@@ -191,115 +191,91 @@ const Home: NextPage = () => {
               </InputGroup2>
             </div>
           </form>
+        </div>
 
-          <div className="grid w-full justify-center overflow-auto">
-            {items?.length ? (
-              <table className="border-collapse">
-                {showHeadlines && (
-                  <thead>
-                    <tr>
-                      <Th>Name</Th>
-                      <Th>Background</Th>
-                      <Th>Text light</Th>
+        <div className="overflow-auto">
+          {items?.length ? (
+            <table className="border-collapse">
+              {showHeadlines && (
+                <thead>
+                  <tr>
+                    <Th>Name</Th>
+                    <Th>Background</Th>
+                    <Th>Text light</Th>
+                    {showRatios && (
+                      <>
+                        <Th>AA L</Th>
+                        <Th>AA S</Th>
+                        <Th>AAA L</Th>
+                        <Th>AAA S</Th>
+                      </>
+                    )}
+                    <Th>Text dark</Th>
+                    {showRatios && (
+                      <>
+                        <Th>AA L</Th>
+                        <Th>AA S</Th>
+                        <Th>AAA L</Th>
+                        <Th>AAA S</Th>
+                      </>
+                    )}
+                  </tr>
+                </thead>
+              )}
+              <tbody>
+                {items.map((item, i) => {
+                  return (
+                    <tr
+                      key={i}
+                      style={{
+                        backgroundColor: item.background,
+                        color: item.ideal?.value,
+                      }}
+                    >
+                      <Td>{item.name}</Td>
+                      <Td>{item.background}</Td>
+                      <Td>{item.light?.value}</Td>
                       {showRatios && (
                         <>
-                          <Th>AA L</Th>
-                          <Th>AA S</Th>
-                          <Th>AAA L</Th>
-                          <Th>AAA S</Th>
+                          <Td>
+                            <Ratio ratio={item.light?.ratio} validation={3} />
+                          </Td>
+                          <Td>
+                            <Ratio ratio={item.light?.ratio} validation={4.5} />
+                          </Td>
+                          <Td>
+                            <Ratio ratio={item.light?.ratio} validation={4.5} />
+                          </Td>
+                          <Td>
+                            <Ratio ratio={item.light?.ratio} validation={7} />
+                          </Td>
                         </>
                       )}
-                      <Th>Text dark</Th>
+                      <Td>{item.dark?.value}</Td>
                       {showRatios && (
                         <>
-                          <Th>AA L</Th>
-                          <Th>AA S</Th>
-                          <Th>AAA L</Th>
-                          <Th>AAA S</Th>
+                          <Td>
+                            <Ratio ratio={item.dark?.ratio} validation={3} />
+                          </Td>
+                          <Td>
+                            <Ratio ratio={item.dark?.ratio} validation={4.5} />
+                          </Td>
+                          <Td>
+                            <Ratio ratio={item.dark?.ratio} validation={4.5} />
+                          </Td>
+                          <Td>
+                            <Ratio ratio={item.dark?.ratio} validation={7} />
+                          </Td>
                         </>
                       )}
                     </tr>
-                  </thead>
-                )}
-                <tbody>
-                  {items.map((item, i) => {
-                    return (
-                      <tr
-                        key={i}
-                        style={{
-                          backgroundColor: item.background,
-                          color: item.ideal?.value,
-                        }}
-                      >
-                        <Td>{item.name}</Td>
-                        <Td>{item.background}</Td>
-                        <Td>{item.light?.value}</Td>
-                        {showRatios && (
-                          <>
-                            <Td>
-                              <Ratio
-                                ratio={item.light?.ratio}
-                                validation={1 / 3}
-                              />
-                            </Td>
-                            <Td>
-                              <Ratio
-                                ratio={item.light?.ratio}
-                                validation={1 / 4.5}
-                              />
-                            </Td>
-                            <Td>
-                              <Ratio
-                                ratio={item.light?.ratio}
-                                validation={1 / 4.5}
-                              />
-                            </Td>
-                            <Td>
-                              <Ratio
-                                ratio={item.light?.ratio}
-                                validation={1 / 7}
-                              />
-                            </Td>
-                          </>
-                        )}
-                        <Td>{item.dark?.value}</Td>
-                        {showRatios && (
-                          <>
-                            <Td>
-                              <Ratio
-                                ratio={item.dark?.ratio}
-                                validation={1 / 3}
-                              />
-                            </Td>
-                            <Td>
-                              <Ratio
-                                ratio={item.dark?.ratio}
-                                validation={1 / 4.5}
-                              />
-                            </Td>
-                            <Td>
-                              <Ratio
-                                ratio={item.dark?.ratio}
-                                validation={1 / 4.5}
-                              />
-                            </Td>
-                            <Td>
-                              <Ratio
-                                ratio={item.dark?.ratio}
-                                validation={1 / 7}
-                              />
-                            </Td>
-                          </>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            ) : (
-              <>Nothing to show</>
-            )}
-          </div>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <>Nothing to show</>
+          )}
         </div>
       </main>
     </>
@@ -392,12 +368,15 @@ const Ratio = ({
   validation: number;
 }) => {
   return ratio ? (
-    <div className="p rounded-full bg-black">
-      {ratio < validation ? (
-        <CheckCircleIcon className="h-6 w-6 text-green-500" />
-      ) : (
-        <XCircleIcon className="h-6 w-6 text-red-500" />
-      )}
+    <div className="flex gap-2">
+      <div className="p rounded-full bg-black">
+        {ratio >= validation ? (
+          <CheckCircleIcon className="h-6 w-6 text-green-500" />
+        ) : (
+          <XCircleIcon className="h-6 w-6 text-red-500" />
+        )}
+      </div>
+      <div>{ratio.toFixed(1)}</div>
     </div>
   ) : null;
 };
