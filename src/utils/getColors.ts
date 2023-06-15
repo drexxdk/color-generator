@@ -51,7 +51,7 @@ const getColors = ({
 
         item.ideal =
           item.light && item.dark
-            ? item.light.ratio > item.dark.ratio
+            ? item.light.ratio <= item.dark.ratio
               ? item.dark
               : item.light
             : undefined;
